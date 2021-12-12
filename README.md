@@ -93,7 +93,7 @@ The library includes three main classes.
 
 PegBoard contains the board and includes the logic for checking and making moves, as well as printing the board state. The class keeps the board as a vector of vectors of pieces, and separately keeps a flattened version of the board, which is a bitfield stored in a uint64_t integer. The latter can be quickly uodated during each move and is very handy as a unique identifier for hashing and indexing when saving the board as unwinnable.
 
-BoardSaver class is just a structure that saves a given board, and provides information whether a given board has been saved. The default approach here is to use a hashmap (std::unordered_set), but there was an alternative that I wanted to test which is a bitfield that can be directly addressed by the flattened board integer, removing the need to perform any hashing. Since this method requires lots of memory (1 GB for the english board), it is not really an example of production-friendly code, but an interesting exercise in efficiency none the less. The three modes of operation for this class are None (never saving boards and always identifing them as not noted), Hashmap (utilizing the hashmap saving), and Bitfield (as described above). Note that the latter uses std::vector<bool>, whcih I expect the compiler to compress to a bitfield. Otherwise, we'd implement it as an array of integers, then setting and getting specific bits using bitshifted masks.
+BoardSaver class is just a structure that saves a given board, and provides information whether a given board has been saved. The default approach here is to use a hashmap (std::unordered_set), but there was an alternative that I wanted to test which is a bitfield that can be directly addressed by the flattened board integer, removing the need to perform any hashing. Since this method requires lots of memory (1 GB for the english board), it is not really an example of production-friendly code, but an interesting exercise in efficiency none the less. The three modes of operation for this class are None (never saving boards and always identifing them as not noted), Hashmap (utilizing the hashmap saving), and Bitfield (as described above). Note that the latter uses std::vector\<bool\>, which I expect the compiler to compress to a bitfield. Otherwise, we'd implement it as an array of integers, then setting and getting specific bits using bitshifted masks.
 
 BoardSolver is class used for solving peg solitaire boards. It is initialized with a certain board and the desired board saving mode, and contains a method for solving the board.
 
@@ -109,6 +109,7 @@ The following times were measured on my machine (Intel i7-4790 CPU, 8 GB RAM, 64
 
 English board solving times
 | BoardSolver initialization | No board saving | Hashmap | Bitfield |
+| --- | --- | --- | --- |
 | Not measured | 14.0 s | 46.9 ms | 15.6 ms |
 | Measured | 13.6 s | 46.9 ms | 297 ms |
 
